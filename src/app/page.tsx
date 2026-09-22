@@ -13,14 +13,9 @@ import AdSlot from '@/components/ads/AdSlot';
 import Link from 'next/link';
 import { PlayCircle, Image as ImageIcon, Flame, ChevronRight, Newspaper } from 'lucide-react';
 
-import { ensureDailyNewsFresh } from '@/lib/dailyNewsSync';
-
 export const revalidate = 30; // Revalidate every 30s for live fresh news feel
 
 export default async function HomePage() {
-  // 0. Auto-check and synchronize today's news if new day
-  await ensureDailyNewsFresh().catch(() => {});
-
   // 1. Fetch published articles & homepage settings
   const [publishedArticles, heroSetting] = await Promise.all([
     prisma.article.findMany({
