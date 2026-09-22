@@ -13,11 +13,13 @@ import AdSlot from '@/components/ads/AdSlot';
 import Link from 'next/link';
 import { PlayCircle, Image as ImageIcon, Flame, ChevronRight, Newspaper } from 'lucide-react';
 
+import { FALLBACK_ARTICLES, FALLBACK_VIDEOS, FALLBACK_GALLERIES } from '@/lib/fallbackData';
+
 export const revalidate = 30; // Revalidate every 30s for live fresh news feel
 
 export default async function HomePage() {
   // 1. Fetch published articles & homepage settings
-  const [publishedArticles, heroSetting] = await Promise.all([
+  let [dbArticles, heroSetting] = await Promise.all([
     prisma.article.findMany({
       where: { status: ArticleStatus.PUBLISHED },
       orderBy: { publishedAt: 'desc' },
@@ -32,6 +34,8 @@ export default async function HomePage() {
       where: { key: 'homepage_hero_id' },
     }).catch(() => null),
   ]);
+
+  const publishedArticles = dbArticles && dbArticles.length > 0 ? dbArticles : FALLBACK_ARTICLES;
 
   // 2. Separate Hero, Secondary, Latest
   const customHero = heroSetting?.value
@@ -64,7 +68,7 @@ export default async function HomePage() {
   const opinionNews = publishedArticles.filter((a) => a.isOpinion || a.category?.slug === 'opinion');
 
   // 5. Fetch Video Stories & Photo Galleries
-  const [videos, galleries] = await Promise.all([
+  let [dbVideos, dbGalleries] = await Promise.all([
     prisma.videoStory.findMany({
       take: 4,
       orderBy: { publishedAt: 'desc' },
@@ -75,6 +79,9 @@ export default async function HomePage() {
       include: { images: true },
     }).catch(() => []),
   ]);
+
+  const videos = dbVideos && dbVideos.length > 0 ? dbVideos : FALLBACK_VIDEOS;
+  const galleries = dbGalleries && dbGalleries.length > 0 ? dbGalleries : FALLBACK_GALLERIES;
 
   return (
     <div className="min-h-screen flex flex-col bg-[#FDFDFD] dark:bg-darkbg text-slate-900 dark:text-slate-100">

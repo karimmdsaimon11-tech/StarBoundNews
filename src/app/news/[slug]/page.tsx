@@ -17,15 +17,19 @@ import { formatBanglaDateTime, formatBanglaFullDate, toBanglaNumber, getBanglaRe
 import { SITE_NAME, SITE_URL } from '@/lib/constants';
 import { getNewsArticleSchema, getBreadcrumbSchema } from '@/lib/seo';
 
+import { FALLBACK_ARTICLES } from '@/lib/fallbackData';
+
 interface ArticlePageProps {
   params: { slug: string };
 }
 
 export async function generateMetadata({ params }: ArticlePageProps): Promise<Metadata> {
-  const article = await prisma.article.findUnique({
+  const dbArticle = await prisma.article.findUnique({
     where: { slug: params.slug },
     include: { category: true, author: true },
   }).catch(() => null);
+
+  const article = dbArticle || FALLBACK_ARTICLES.find((a) => a.slug === params.slug);
 
   if (!article) {
     return { title: 'সংবাদ পাওয়া যায়নি' };
@@ -37,7 +41,7 @@ export async function generateMetadata({ params }: ArticlePageProps): Promise<Me
   return {
     title: `${title} | ${SITE_NAME}`,
     description,
-    keywords: article.tags?.split(',').map((t) => t.trim()) || [],
+    keywords: article.tags?.split(',').map((t: string) => t.trim()) || [],
     openGraph: {
       title,
       description,
@@ -45,7 +49,7 @@ export async function generateMetadata({ params }: ArticlePageProps): Promise<Me
       siteName: SITE_NAME,
       type: 'article',
       publishedTime: article.publishedAt?.toISOString(),
-      modifiedTime: article.updatedAt.toISOString(),
+      modifiedTime: (article.updatedAt || article.createdAt)?.toISOString(),
       authors: [article.author?.name || 'StatBound Reporter'],
       section: article.category?.nameBn || 'জাতীয়',
       images: [
@@ -69,7 +73,7 @@ export async function generateMetadata({ params }: ArticlePageProps): Promise<Me
 export const revalidate = 60;
 
 export default async function ArticleDetailPage({ params }: ArticlePageProps) {
-  const article = await prisma.article.findUnique({
+  const dbArticle = await prisma.article.findUnique({
     where: { slug: params.slug },
     include: {
       category: true,
@@ -84,18 +88,22 @@ export default async function ArticleDetailPage({ params }: ArticlePageProps) {
     },
   }).catch(() => null);
 
-  if (!article || article.status !== ArticleStatus.PUBLISHED) {
+  const article = dbArticle || FALLBACK_ARTICLES.find((a) => a.slug === params.slug);
+
+  if (!article) {
     notFound();
   }
 
-  // Increment view count asynchronously
-  prisma.article.update({
-    where: { id: article.id },
-    data: { viewsCount: { increment: 1 } },
-  }).catch(() => {});
+  // Increment view count asynchronously if in DB
+  if (dbArticle) {
+    prisma.article.update({
+      where: { id: article.id },
+      data: { viewsCount: { increment: 1 } },
+    }).catch(() => {});
+  }
 
   // Related articles in same category
-  const [relatedArticles, trendingArticles] = await Promise.all([
+  const [dbRelated, dbTrending] = await Promise.all([
     prisma.article.findMany({
       where: {
         categoryId: article.categoryId,
@@ -113,6 +121,13 @@ export default async function ArticleDetailPage({ params }: ArticlePageProps) {
       include: { category: true, author: true },
     }).catch(() => []),
   ]);
+
+  const relatedArticles = dbRelated && dbRelated.length > 0
+    ? dbRelated
+    : FALLBACK_ARTICLES.filter((a) => a.id !== article.id).slice(0, 4);
+  const trendingArticles = dbTrending && dbTrending.length > 0
+    ? dbTrending
+    : FALLBACK_ARTICLES.slice(0, 5);
 
   const displayTitle = article.titleBn || article.title;
   const categoryName = article.category?.nameBn || article.category?.name || 'জাতীয়';
@@ -139,7 +154,7 @@ export default async function ArticleDetailPage({ params }: ArticlePageProps) {
   ]);
 
   const tagsList = article.tags
-    ? article.tags.split(',').map((t) => t.trim()).filter(Boolean)
+    ? article.tags.split(',').map((t: string) => t.trim()).filter(Boolean)
     : [];
 
   return (
@@ -301,7 +316,7 @@ export default async function ArticleDetailPage({ params }: ArticlePageProps) {
                   <Tag className="w-3.5 h-3.5" />
                   ট্যাগ:
                 </span>
-                {tagsList.map((tag) => (
+                {tagsList.map((tag: string) => (
                   <Link
                     key={tag}
                     href={`/search?q=${encodeURIComponent(tag)}`}
@@ -321,7 +336,7 @@ export default async function ArticleDetailPage({ params }: ArticlePageProps) {
             {/* Comments Section */}
             <CommentSection
               articleId={article.id}
-              initialComments={article.comments.map((c) => ({
+              initialComments={(article.comments || []).map((c: any) => ({
                 id: c.id,
                 name: c.name,
                 content: c.content,
