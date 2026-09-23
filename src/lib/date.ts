@@ -239,13 +239,31 @@ export function getDhakaCurrentDateStr(): string {
 }
 
 /**
- * Get start and end of day in Asia/Dhaka timezone
+ * Get start and end of day in Asia/Dhaka timezone safely for any Date or string input
  */
-export function getDhakaDayBoundaries(dateStr?: string): { startOfDay: Date; endOfDay: Date } {
-  const targetDateStr = dateStr || getDhakaCurrentDateStr();
-  // BST is UTC+6
+export function getDhakaDayBoundaries(dateInput?: Date | string | number | null): { startOfDay: Date; endOfDay: Date } {
+  let targetDateStr: string;
+  if (!dateInput) {
+    targetDateStr = getDhakaCurrentDateStr();
+  } else if (typeof dateInput === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(dateInput)) {
+    targetDateStr = dateInput;
+  } else {
+    const d = new Date(dateInput);
+    if (isNaN(d.getTime())) {
+      targetDateStr = getDhakaCurrentDateStr();
+    } else {
+      targetDateStr = new Intl.DateTimeFormat('en-CA', {
+        timeZone: 'Asia/Dhaka',
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+      }).format(d);
+    }
+  }
+
   const startOfDay = new Date(`${targetDateStr}T00:00:00+06:00`);
   const endOfDay = new Date(`${targetDateStr}T23:59:59.999+06:00`);
 
   return { startOfDay, endOfDay };
 }
+
