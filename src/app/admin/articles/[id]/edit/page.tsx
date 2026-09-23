@@ -331,6 +331,86 @@ export default function EditArticlePage({ params }: EditArticlePageProps) {
               </div>
             </div>
 
+            {/* Image & Contextual Media Management */}
+            <div className="bg-white dark:bg-darkbg-card p-5 rounded-xl border border-slate-200/80 dark:border-darkbg-border shadow-xs space-y-3.5">
+              <h3 className="font-headline font-bold text-sm text-slate-900 dark:text-white pb-2 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
+                <span>ফিচারড ইমেজ ও মিডিয়া</span>
+                <span className="text-[10px] bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300 px-2 py-0.5 rounded font-mono">
+                  Context Image
+                </span>
+              </h3>
+
+              {formData.featuredImage && (
+                <div className="relative aspect-video rounded-lg overflow-hidden border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-900 group">
+                  <img
+                    src={formData.featuredImage}
+                    alt={formData.focusKeyword || formData.title}
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center p-2 text-center text-[11px] text-white">
+                    {formData.imageCaption || 'No caption set'}
+                  </div>
+                </div>
+              )}
+
+              <div>
+                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
+                  ইমেজ লিঙ্ক (Image URL) *
+                </label>
+                <input
+                  type="url"
+                  name="featuredImage"
+                  value={formData.featuredImage}
+                  onChange={handleChange}
+                  required
+                  placeholder="https://images.unsplash.com/..."
+                  className="w-full text-xs px-3 py-2 rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white font-mono"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
+                  ছবির ক্যাপশন (Caption)
+                </label>
+                <input
+                  type="text"
+                  name="imageCaption"
+                  value={formData.imageCaption}
+                  onChange={handleChange}
+                  placeholder="ছবির বর্ণনা বা ক্যাপশন লিখুন"
+                  className="w-full text-xs px-3 py-2 rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
+                  ক্রেডিট / ফটো সোর্স (Attribution / Source)
+                </label>
+                <input
+                  type="text"
+                  name="photographerCredit"
+                  value={formData.photographerCredit}
+                  onChange={handleChange}
+                  placeholder="যেমন: Prothom Alo / StatBound Photo"
+                  className="w-full text-xs px-3 py-2 rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
+                  অল্টারনেটিভ টেক্সট / ফোকাস কীওয়ার্ড (ALT Text)
+                </label>
+                <input
+                  type="text"
+                  name="focusKeyword"
+                  value={formData.focusKeyword}
+                  onChange={handleChange}
+                  placeholder="ছবির বর্ণনামূলক অল্টার টেক্সট"
+                  className="w-full text-xs px-3 py-2 rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white"
+                />
+              </div>
+            </div>
+
             <div className="bg-white dark:bg-darkbg-card p-5 rounded-xl border border-slate-200/80 dark:border-darkbg-border shadow-xs space-y-2.5">
               <h3 className="font-headline font-bold text-sm text-slate-900 dark:text-white pb-2 border-b border-slate-100 dark:border-slate-800">
                 ফ্ল্যাগ সেটিংস
