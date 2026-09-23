@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import AdminLayout from '@/components/admin/AdminLayout';
+import ImageUploadInput from '@/components/admin/ImageUploadInput';
 import { Video, Plus, Trash2, Edit2, Play, ExternalLink, Sparkles } from 'lucide-react';
 import Image from 'next/image';
 
@@ -265,16 +266,11 @@ export default function AdminVideosPage() {
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
-                    থাম্বনেইল ইমেজ URL *
-                  </label>
-                  <input
-                    type="url"
-                    required
+                  <ImageUploadInput
+                    label="ভিডিও থাম্বনেইল ছবি (Thumbnail Image) *"
                     value={thumbnailUrl}
-                    onChange={(e) => setThumbnailUrl(e.target.value)}
-                    placeholder="https://images.unsplash.com/..."
-                    className="w-full px-3 py-2 text-xs border border-slate-300 dark:border-darkbg-border rounded-lg bg-slate-50 dark:bg-slate-800 focus:outline-none focus:ring-1 focus:ring-newspaper-accent"
+                    onChange={(url) => setThumbnailUrl(url)}
+                    placeholder="https://... বা কম্পিউটার থেকে থাম্বনেইল আপলোড করুন"
                   />
                 </div>
                 <div className="grid grid-cols-2 gap-3">

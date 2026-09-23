@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import AdminLayout from '@/components/admin/AdminLayout';
+import ImageUploadInput from '@/components/admin/ImageUploadInput';
 import { Megaphone, Plus, Trash2, Power, BarChart3, Eye, MousePointerClick, ExternalLink } from 'lucide-react';
 import { AD_PLACEMENTS } from '@/lib/constants';
 import { toBanglaNumber } from '@/lib/date';
@@ -125,14 +126,12 @@ export default function AdminAdvertisementsPage() {
                 </div>
 
                 <div>
-                  <label className="block font-semibold mb-1">ইমেজ ব্যানার URL *</label>
-                  <input
-                    type="text"
-                    required
+                  <ImageUploadInput
+                    label="বিজ্ঞাপন ব্যানার ইমেজ (Ad Banner Creative) *"
                     value={formData.imageUrl}
-                    onChange={(e) => setFormData({ ...formData, imageUrl: e.target.value })}
-                    placeholder="https://images.unsplash.com/..."
-                    className="w-full px-3 py-2 rounded border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white"
+                    onChange={(url) => setFormData({ ...formData, imageUrl: url })}
+                    placeholder="https://... বা সরাসরি ব্যানার আপলোড করুন"
+                    aspectRatio="banner"
                   />
                 </div>
 

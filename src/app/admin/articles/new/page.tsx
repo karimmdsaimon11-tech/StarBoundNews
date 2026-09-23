@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import AdminLayout from '@/components/admin/AdminLayout';
+import ImageUploadInput from '@/components/admin/ImageUploadInput';
 import { Save, ArrowLeft, Image as ImageIcon, Sparkles, Flame, Eye, Globe } from 'lucide-react';
 
 export default function NewArticlePage() {
@@ -223,36 +224,43 @@ export default function NewArticlePage() {
               </p>
             </div>
 
-            {/* Featured Image Box */}
-            <div className="bg-white dark:bg-darkbg-card p-5 rounded-xl border border-slate-200/80 dark:border-darkbg-border shadow-xs space-y-3">
-              <label className="block text-xs font-bold text-slate-800 dark:text-slate-200">
-                ফিচার ইমেজ ও ছবির ক্যাপশন (Featured Image & Caption)
-              </label>
-              <input
-                type="text"
-                name="featuredImage"
+            {/* Featured Image Box with Upload & URL */}
+            <div className="bg-white dark:bg-darkbg-card p-5 rounded-xl border border-slate-200/80 dark:border-darkbg-border shadow-xs space-y-4">
+              <ImageUploadInput
+                label="সংবাদের মূল ছবি / ফিচার ইমেজ (Featured Image) *"
                 value={formData.featuredImage}
-                onChange={handleChange}
-                placeholder="ইমেজ URL (https://...)"
-                className="w-full text-xs px-3 py-2 rounded border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white focus:outline-none"
+                onChange={(url) => setFormData((prev) => ({ ...prev, featuredImage: url }))}
+                placeholder="https://... বা কম্পিউটার থেকে সরাসরি ছবি আপলোড করুন"
+                helperText="কম্পিউটার থেকে সরাসরি ছবি আপলোড করতে পারেন অথবা যেকোনো অনলাইন ইমেজ লিঙ্ক পেস্ট করতে পারেন।"
               />
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <input
-                  type="text"
-                  name="imageCaption"
-                  value={formData.imageCaption}
-                  onChange={handleChange}
-                  placeholder="ছবির ক্যাপশন (Caption)"
-                  className="w-full text-xs px-3 py-2 rounded border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white focus:outline-none"
-                />
-                <input
-                  type="text"
-                  name="photographerCredit"
-                  value={formData.photographerCredit}
-                  onChange={handleChange}
-                  placeholder="ফটোগ্রাফার ক্রেডিট (Credit)"
-                  className="w-full text-xs px-3 py-2 rounded border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white focus:outline-none"
-                />
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+                <div>
+                  <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
+                    ছবির ক্যাপশন (Image Caption)
+                  </label>
+                  <input
+                    type="text"
+                    name="imageCaption"
+                    value={formData.imageCaption}
+                    onChange={handleChange}
+                    placeholder="ছবির বর্ণনা বা ক্যাপশন লিখুন"
+                    className="w-full text-xs px-3 py-2 rounded border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white focus:outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
+                    ফটোগ্রাফার / ফটো সোর্স ক্রেডিট (Credit)
+                  </label>
+                  <input
+                    type="text"
+                    name="photographerCredit"
+                    value={formData.photographerCredit}
+                    onChange={handleChange}
+                    placeholder="উদাঃ Staff / StatBound Media"
+                    className="w-full text-xs px-3 py-2 rounded border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white focus:outline-none"
+                  />
+                </div>
               </div>
             </div>
           </div>

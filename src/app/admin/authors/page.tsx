@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import AdminLayout from '@/components/admin/AdminLayout';
+import ImageUploadInput from '@/components/admin/ImageUploadInput';
 import { Users, Plus, Mail, BookOpen } from 'lucide-react';
 import { toBanglaNumber } from '@/lib/date';
 import Link from 'next/link';
@@ -117,6 +118,16 @@ export default function AdminAuthorsPage() {
                   className="w-full px-3 py-2 rounded border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white"
                 />
               </div>
+            </div>
+
+            <div>
+              <ImageUploadInput
+                label="প্রোফাইল ছবি / অবতার (Avatar Photo)"
+                value={avatar}
+                onChange={(url) => setAvatar(url)}
+                placeholder="https://... বা ছবি আপলোড করুন"
+                aspectRatio="square"
+              />
             </div>
 
             <div>

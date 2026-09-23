@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import AdminLayout from '@/components/admin/AdminLayout';
+import ImageUploadInput from '@/components/admin/ImageUploadInput';
 import {
   Settings,
   Save,
@@ -233,6 +234,28 @@ export default function AdminSettingsPage() {
                 </h3>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <ImageUploadInput
+                      label="পত্রিকার অফিসিয়াল লোগো (Site Logo Image)"
+                      value={settings.siteLogo || ''}
+                      onChange={(url) => handleChange('siteLogo', url)}
+                      placeholder="https://... বা সরাসরি লোগো আপলোড করুন"
+                      aspectRatio="auto"
+                      helperText="পিএনজি বা স্বচ্ছ ব্যাকগ্রাউন্ডের লোগো ব্যবহার করা উত্তম।"
+                    />
+                  </div>
+
+                  <div>
+                    <ImageUploadInput
+                      label="ওয়েবসাইট ফেভিকন (Favicon / App Icon)"
+                      value={settings.siteFavicon || ''}
+                      onChange={(url) => handleChange('siteFavicon', url)}
+                      placeholder="https://... বা ফেভিকন আপলোড করুন"
+                      aspectRatio="square"
+                      helperText="স্কয়ার সাইজ (৩২x৩২ বা ৬৪x৬৪) আইকন।"
+                    />
+                  </div>
+
                   <div>
                     <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
                       পত্রিকার নাম (বাংলায়) *

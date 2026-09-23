@@ -559,7 +559,8 @@ export async function syncLiveRssNews(): Promise<{
 
       for (let i = 0; i < items.length && i < 15; i++) {
         const item = items[i];
-        const slug = generateSlug(item.title) + '-' + Math.abs(item.link.split('').reduce((a, b) => ((a << 5) - a + b.charCodeAt(0)) | 0, 0)).toString(36);
+        const hash = Math.abs(item.link.split('').reduce((a, b) => ((a << 5) - a + b.charCodeAt(0)) | 0, 0)).toString(36);
+        const slug = `${generateSlug(item.title)}-${hash}`;
 
         // Deduplication Check: By Canonical Link or Slug or exact Title
         const existingByLink = await prisma.article.findFirst({
@@ -581,32 +582,35 @@ export async function syncLiveRssNews(): Promise<{
 
         const articleContent = `${item.description}\n\n[সংবাদ সূত্র: ${item.source} — বিস্তারিত তথ্যের জন্য মূল প্রতিবেদন দেখুন]`;
 
-        await prisma.article.create({
-          data: {
-            title: item.title,
-            titleBn: item.titleBn || item.title,
-            slug: slug,
-            excerpt: item.description.length > 200 ? item.description.slice(0, 197) + '...' : item.description,
-            content: articleContent,
-            featuredImage: imageMeta.imageUrl,
-            imageCaption: imageMeta.caption,
-            photographerCredit: imageMeta.credit,
-            focusKeyword: imageMeta.altText,
-            tags: imageMeta.keywords.join(', '),
-            categoryId: categoryId,
-            authorId: defaultAuthor.id,
-            status: 'PUBLISHED',
-            canonicalUrl: item.link,
-            isBreaking: i === 0 && feed.category === 'national',
-            isHero: i === 0 && feed.category === 'national',
-            isFeatured: i < 3,
-            isTrending: i < 2,
-            readTimeMinutes: Math.max(2, Math.ceil(item.description.length / 300)),
-            publishedAt: item.pubDate,
-          },
-        });
-
-        totalInserted++;
+        try {
+          await prisma.article.create({
+            data: {
+              title: item.title,
+              titleBn: item.titleBn || item.title,
+              slug: slug,
+              excerpt: item.description.length > 200 ? item.description.slice(0, 197) + '...' : item.description,
+              content: articleContent,
+              featuredImage: imageMeta.imageUrl,
+              imageCaption: imageMeta.caption,
+              photographerCredit: imageMeta.credit,
+              focusKeyword: imageMeta.altText,
+              tags: imageMeta.keywords.join(', '),
+              categoryId: categoryId,
+              authorId: defaultAuthor.id,
+              status: 'PUBLISHED',
+              canonicalUrl: item.link,
+              isBreaking: i === 0 && feed.category === 'national',
+              isHero: i === 0 && feed.category === 'national',
+              isFeatured: i < 3,
+              isTrending: i < 2,
+              readTimeMinutes: Math.max(2, Math.ceil(item.description.length / 300)),
+              publishedAt: item.pubDate,
+            },
+          });
+          totalInserted++;
+        } catch {
+          // If slug race condition occurred, skip safely
+        }
       }
 
       if (!categoriesSynced.includes(feed.category)) {

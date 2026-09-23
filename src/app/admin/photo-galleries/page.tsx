@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import AdminLayout from '@/components/admin/AdminLayout';
+import ImageUploadInput from '@/components/admin/ImageUploadInput';
 import { Camera, Plus, Trash2, ExternalLink, Image as ImageIcon } from 'lucide-react';
 import Image from 'next/image';
 
@@ -219,16 +220,11 @@ export default function AdminPhotoGalleriesPage() {
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
-                    কভার ছবি URL *
-                  </label>
-                  <input
-                    type="url"
-                    required
+                  <ImageUploadInput
+                    label="অ্যালবাম কভার ছবি (Cover Photo) *"
                     value={coverImage}
-                    onChange={(e) => setCoverImage(e.target.value)}
-                    placeholder="https://images.unsplash.com/..."
-                    className="w-full px-3 py-2 text-xs border border-slate-300 dark:border-darkbg-border rounded-lg bg-slate-50 dark:bg-slate-800 focus:outline-none focus:ring-1 focus:ring-newspaper-accent"
+                    onChange={(url) => setCoverImage(url)}
+                    placeholder="https://... বা কম্পিউটার থেকে কভার ছবি আপলোড করুন"
                   />
                 </div>
                 <div>

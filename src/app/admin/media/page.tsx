@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import AdminLayout from '@/components/admin/AdminLayout';
+import ImageUploadInput from '@/components/admin/ImageUploadInput';
 import { Image as ImageIcon, Plus, Trash2, Copy, Check, Search, ExternalLink } from 'lucide-react';
 import Image from 'next/image';
 
@@ -182,16 +183,17 @@ export default function AdminMediaPage() {
               </h3>
               <form onSubmit={handleAddMedia} className="space-y-4">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
-                    ছবির ইমেজ URL *
-                  </label>
-                  <input
-                    type="url"
-                    required
+                  <ImageUploadInput
+                    label="ছবি নির্বাচন বা আপলোড করুন *"
                     value={url}
-                    onChange={(e) => setUrl(e.target.value)}
-                    placeholder="https://images.unsplash.com/..."
-                    className="w-full px-3 py-2 text-xs border border-slate-300 dark:border-darkbg-border rounded-lg bg-slate-50 dark:bg-slate-800 focus:outline-none focus:ring-1 focus:ring-newspaper-accent"
+                    onChange={(newUrl) => {
+                      setUrl(newUrl);
+                      if (!filename && newUrl) {
+                        const parts = newUrl.split('/');
+                        setFilename(parts[parts.length - 1] || 'image.jpg');
+                      }
+                    }}
+                    placeholder="https://... বা সরাসরি আপলোড করুন"
                   />
                 </div>
                 <div>
